@@ -3,6 +3,8 @@
 **English** | [Español](README.md)
 
 [![MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.8%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/downloads/)
+[![Docker](https://img.shields.io/badge/docker-ready-2496ED?logo=docker&logoColor=white)](Dockerfile)
 
 ![Laya Tester in action](docs/captura.png)
 
@@ -10,7 +12,7 @@ A page for testing a [Laya](https://github.com/NandhaKishorM/laya) server (`laya
 
 You build the questions (pick an option, score on a 1-to-N scale, or yes/no), hit run, and the response comes back with its percentages nicely drawn: bars per option, the needle on the urgency scale, the yes/no meter, the confidence of each answer, how long it took…
 
-Nothing to install. No Node, no npm, no dependencies.
+Nothing to install: no Node, no npm, no dependencies. Just **Python 3.8+** (standard library) or, if you prefer, **Docker**.
 
 ## How to use it
 

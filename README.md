@@ -3,6 +3,8 @@
 **Español** | [English](README.en.md)
 
 [![MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.8%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/downloads/)
+[![Docker](https://img.shields.io/badge/docker-ready-2496ED?logo=docker&logoColor=white)](Dockerfile)
 
 ![Laya Tester en acción](docs/captura.png)
 
@@ -10,7 +12,7 @@ Una página para probar un servidor [Laya](https://github.com/NandhaKishorM/laya
 
 Montas las preguntas (elegir opción, puntuar del 1 al N, o sí/no), le das a ejecutar y ves la respuesta con sus porcentajes bien pintados: barras por opción, la aguja en la escala de urgencia, el medidor de sí/no, la confianza de cada respuesta, lo que ha tardado…
 
-No hay nada que instalar. Ni Node, ni npm, ni dependencias.
+No hay nada que instalar: ni Node, ni npm, ni dependencias. Solo **Python 3.8+** (librería estándar) o, si lo prefieres, **Docker**.
 
 ## Cómo se usa
 
