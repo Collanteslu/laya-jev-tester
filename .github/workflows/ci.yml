@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Validar la sintaxis del JS de index.html
+        run: |
+          python3 -c "
+          import re
+          html = open('index.html').read()
+          m = re.search(r'<script>(.*?)</script>', html, re.S)
+          open('/tmp/app.js', 'w').write(m.group(1))
+          "
+          node --check /tmp/app.js
+
+      - name: Comprobar paridad de claves es/en
+        run: |
+          python3 -c "
+          import re
+          html = open('index.html').read()
+          m = re.search(r'const I18N = (\{.*?\n\});', html, re.S)
+          open('/tmp/i18n.js', 'w').write('const I18N = ' + m.group(1) + '; module.exports = I18N;')
+          "
+          node -e "
+          const a = require('/tmp/i18n.js');
+          const es = Object.keys(a.es), en = Object.keys(a.en);
+          const miss = es.filter(k => !en.includes(k)).concat(en.filter(k => !es.includes(k)));
+          if (miss.length) { console.error('claves sin traducir:', miss); process.exit(1); }
+          console.log('i18n OK:', es.length, 'claves x 2 idiomas');
+          "
+
+      - name: Levantar server.py y probar la página y el proxy
+        run: |
+          python3 server.py > /tmp/server.log 2>&1 &
+          sleep 1
+          code=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8899/)
+          test "$code" = "200"
+          curl -s -X POST http://127.0.0.1:8899/proxy \
+            -H 'content-type: application/json' \
+            -d '{"url":"https://example.com/","token":"","body":{}}' \
+            | python3 -c "import json,sys; d=json.load(sys.stdin); assert 'ok' in d, d; print('proxy OK:', d)"
