@@ -20,6 +20,23 @@ python3 server.py
 
 Y abres <http://127.0.0.1:8899> en el navegador. Ahí pones la URL de tu endpoint y el Bearer token, escribes el texto a evaluar, defines tus preguntas y le das a **Ejecutar** (o `Ctrl/⌘ + Enter`).
 
+## Con Docker
+
+Si prefieres no tocar el Python del sistema:
+
+```bash
+docker build -t laya-tester .
+docker run --rm -p 8899:8899 laya-tester
+```
+
+O directamente con Compose:
+
+```bash
+docker compose up --build
+```
+
+La imagen es `python:3.12-alpine`, sirve en `0.0.0.0:8899` dentro del contenedor y expone el 8899 al host. Puedes cambiar el puerto con `-e PORT=...` y `-p`.
+
 ## Probar Jev gratis (OpenCode Zen)
 
 Además de tu servidor Laya, el tester apunta directo a Jev sin coste y sin key:
@@ -92,6 +109,7 @@ Todo el código son dos ficheros, para que no haya sorpresas:
 
 - `index.html` — la página entera: interfaz, estilos y lógica, todo en un fichero.
 - `server.py` — el servidor estático y el proxy, en Python estándar.
+- `Dockerfile` + `docker-compose.yml` — para levantar todo en un contenedor.
 
 Y luego solo recursos: `favicon.svg` + sus PNGs, `docs/captura.png` y los ficheros de GitHub (`.github/`, `LICENSE`, `CHANGELOG.md`…).
 

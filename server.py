@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json
+import os
 import ssl
 import sys
 import urllib.error
@@ -7,7 +8,8 @@ import urllib.request
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from socketserver import ThreadingMixIn
 
-PORT = 8899
+PORT = int(os.environ.get("PORT", "8899"))
+HOST = os.environ.get("HOST", "127.0.0.1")
 PASSTHROUGH_HEADERS = ("x-inference-time-ms", "server-timing")
 
 
@@ -85,5 +87,5 @@ if __name__ == "__main__":
         ssl._create_default_https_context = ssl.create_default_context
     except Exception:
         pass
-    print(f"\n  Laya Tester  →  http://127.0.0.1:{PORT}\n  (Ctrl+C para parar)\n")
-    Server(("127.0.0.1", PORT), Handler).serve_forever()
+    print(f"\n  Laya Tester  →  http://{HOST}:{PORT}\n  (Ctrl+C para parar)\n")
+    Server((HOST, PORT), Handler).serve_forever()

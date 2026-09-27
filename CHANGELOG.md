@@ -2,6 +2,21 @@
 
 Todo lo notable de este proyecto, con el formato más cercano a [Keep a Changelog](https://keepachangelog.com/es/1.1.0/).
 
+## [0.2.1] - 2026-09-27
+
+### Añadido
+
+- `Dockerfile` (python:3.12-alpine, usuario no root, healthcheck) y `docker-compose.yml` para levantar el tester en un contenedor.
+- `server.py` acepta `HOST` y `PORT` por entorno (`127.0.0.1:8899` por defecto; la imagen usa `0.0.0.0:8899`).
+- Sección «Con Docker» en los README (es/en).
+
+### Cambiado
+
+- La tarjeta **Petición JSON** (Run + copiar curl) sube al principio de la columna 2, siempre visible sin bajar.
+- Las barras de `score` muestran el número de nivel **y** su texto (del formulario o del `legend` de la respuesta).
+- Presets bilingües: cuerpo, claves, instructions y criteria en el idioma activo; al cambiar ES/EN el contenido cargado que coincide con un preset se re-localiza (el texto personalizado no se toca).
+- Placeholders y altas nuevas localizados (`question_1`, `low/medium/high`, `yes/no`…).
+
 ## [0.2.0] - 2026-09-27
 
 ### Añadido
