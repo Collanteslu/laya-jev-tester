@@ -79,21 +79,21 @@ In the end, this is what gets sent (the same thing you'd do with curl):
 
 ```json
 {
-  "state": {"body": "Hola, me habéis cobrado dos veces la cuota de este mes. ¿Me devolvéis una?"},
+  "state": {"body": "Hello, you've charged me twice for this month's fee. Will you refund one of them?"},
   "questions": {
-    "departamento": {
+    "department": {
       "type": "choice",
-      "instructions": "¿Qué departamento lo atiende?",
-      "criteria": {"facturacion": "pagos, facturas, reembolsos", "tecnico": "errores, caídas"}
+      "instructions": "Which department handles it?",
+      "criteria": {"billing": "payments, invoices, refunds", "tech": "errors, outages"}
     },
-    "urgencia": {
+    "urgency": {
       "type": "score",
-      "instructions": "¿Qué urgencia tiene?",
-      "criteria": ["no urgente", "pronto", "crítico"]
+      "instructions": "How urgent is it?",
+      "criteria": ["not urgent", "soon", "critical"]
     },
-    "pide_reembolso": {
+    "asks_refund": {
       "type": "noul",
-      "instructions": "¿Pide explícitamente un reembolso?"
+      "instructions": "Does it explicitly ask for a refund?"
     }
   }
 }
