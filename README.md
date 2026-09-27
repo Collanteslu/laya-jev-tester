@@ -1,4 +1,6 @@
-# Laya Tester
+<div align="center">
+
+# Laya Jev Tester
 
 **Español** | [English](README.en.md)
 
@@ -6,7 +8,9 @@
 [![Python](https://img.shields.io/badge/python-3.8%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/downloads/)
 [![Docker](https://img.shields.io/badge/docker-ready-2496ED?logo=docker&logoColor=white)](Dockerfile)
 
-![Laya Tester en acción](docs/captura.png)
+</div>
+
+![Laya Jev Tester en acción](docs/captura.png)
 
 Una página para probar un servidor [Laya](https://github.com/NandhaKishorM/laya) (`laya-serve`) o cualquier API compatible con el protocolo de Jev (`POST /v1/systemone`), sin tener que andar escribiendo curls a mano.
 
@@ -27,8 +31,8 @@ Y abres <http://127.0.0.1:8899> en el navegador. Ahí pones la URL de tu endpoin
 Si prefieres no tocar el Python del sistema:
 
 ```bash
-docker build -t laya-tester .
-docker run --rm -p 8899:8899 laya-tester
+docker build -t laya-jev-tester .
+docker run --rm -p 8899:8899 laya-jev-tester
 ```
 
 O directamente con Compose:

@@ -87,5 +87,5 @@ if __name__ == "__main__":
         ssl._create_default_https_context = ssl.create_default_context
     except Exception:
         pass
-    print(f"\n  Laya Tester  →  http://{HOST}:{PORT}\n  (Ctrl+C para parar)\n")
+    print(f"\n  Laya Jev Tester →  http://{HOST}:{PORT}\n  (Ctrl+C para parar)\n")
     Server((HOST, PORT), Handler).serve_forever()

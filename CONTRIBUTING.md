@@ -5,8 +5,8 @@ Gracias por el interés. Es un proyecto pequeño a propósito: dos ficheros, sin
 ## Cómo montártelo en local
 
 ```bash
-git clone https://github.com/TU-USUARIO/laya-tester
-cd laya-tester
+git clone https://github.com/Collanteslu/laya-jev-tester
+cd laya-jev-tester
 python3 server.py
 ```
 

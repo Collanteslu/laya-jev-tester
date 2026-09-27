@@ -1,5 +1,5 @@
 services:
-  laya-tester:
+  laya-jev-tester:
     build: .
     ports:
       - "8899:8899"
