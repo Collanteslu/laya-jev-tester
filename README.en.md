@@ -20,6 +20,16 @@ python3 server.py
 
 Then open <http://127.0.0.1:8899> in your browser. Put your endpoint URL and Bearer token in, write the text to evaluate, define your questions, and hit **Run** (or `Ctrl/⌘ + Enter`).
 
+## Try Jev for free (OpenCode Zen)
+
+Besides your own Laya server, the tester points straight at Jev at no cost and with no key:
+
+1. In **Connection**, pick `jev-1.13-free (Zen, free)` under *Checkpoint (model)*. If the URL field is empty it fills itself with `https://opencode.ai/zen/v1/systemone`.
+2. The Bearer field disables itself: that API is anonymous and the request goes out without an `Authorization` header.
+3. Run it. It answers just like Laya — `choice`, `score` and `noul` with their probabilities, `usage`, the lot.
+
+For your own server (`laya-serve`) nothing changes: your URL + your Bearer + a Laya checkpoint (`auto`, `english`, `multilingual` or `typed-decisions`). And if an API needs custom headers (`X-Title`, `HTTP-Referer`…), they live in the **Extra headers** card and also show up in the generated `curl`.
+
 ## Requirements
 
 - **Python 3.8 or newer**, that's it. The server uses only the standard library (`http.server`, `urllib`), so the `python3` already on your Mac or Linux box works as is.

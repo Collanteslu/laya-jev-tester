@@ -133,6 +133,7 @@
     opacity:0;pointer-events:none;transition:opacity .25s}
   .toast.show{opacity:1}
   .togglebox{display:flex;align-items:center;gap:8px;margin-top:10px}
+  #bearerBlock.off{opacity:.32;pointer-events:none;filter:grayscale(.6)}
   .switch{position:relative;width:34px;height:19px;flex-shrink:0}
   .switch input{opacity:0;width:0;height:0}
   .slider{position:absolute;inset:0;background:var(--border2);border-radius:99px;cursor:pointer;transition:.2s}
@@ -159,12 +160,15 @@
       <label data-i18n="url_label">URL del endpoint</label>
       <input type="text" id="url" placeholder="https://tu-servidor/v1/systemone">
       <div style="height:10px"></div>
-      <label>Bearer token</label>
-      <div class="row">
-        <input type="password" id="token" placeholder="peg aquí tu token" data-i18n-ph="token_ph" autocomplete="off">
-        <button class="btn ghost" id="showToken" style="flex:0 0 44px;justify-content:center">👁</button>
+      <div id="bearerBlock">
+        <label>Bearer token</label>
+        <div class="row">
+          <input type="password" id="token" placeholder="peg aquí tu token" data-i18n-ph="token_ph" autocomplete="off">
+          <button class="btn ghost" id="showToken" style="flex:0 0 44px;justify-content:center">👁</button>
+        </div>
+        <p class="hint" data-i18n="token_hint">Se guarda solo en tu navegador (localStorage). No se envía a ningún sitio salvo a la URL de arriba.</p>
       </div>
-      <p class="hint" data-i18n="token_hint">Se guarda solo en tu navegador (localStorage). No se envía a ningún sitio salvo a la URL de arriba.</p>
+      <p class="hint" id="jevNote" style="display:none" data-i18n="jev_note"></p>
       <div style="height:10px"></div>
       <div class="row">
         <div>
@@ -250,6 +254,7 @@ const I18N = {
   es: {
     conn_card:"Conexión", url_label:"URL del endpoint", token_ph:"peg aquí tu token",
     token_hint:"Se guarda solo en tu navegador (localStorage). No se envía a ningún sitio salvo a la URL de arriba.",
+    jev_note:"jev-1.13-free no necesita token: la petición sale sin cabecera Authorization.",
     model_label:"Checkpoint (model)", proxy:"usar proxy local",
     model_jev:"jev-1.13-free (Zen, gratis)",
     headers_card:"Cabeceras extra", add_h:"+ cabecera",
@@ -284,6 +289,7 @@ const I18N = {
   en: {
     conn_card:"Connection", url_label:"Endpoint URL", token_ph:"paste your token here",
     token_hint:"Stored only in your browser (localStorage). Sent nowhere but the URL above.",
+    jev_note:"jev-1.13-free needs no token: the request goes out without an Authorization header.",
     model_label:"Checkpoint (model)", proxy:"use local proxy",
     model_jev:"jev-1.13-free (Zen, free)",
     headers_card:"Extra headers", add_h:"+ header",
@@ -329,6 +335,15 @@ const els = {
 };
 
 let extraHeaders = [];
+const ZEN_URL = "https://opencode.ai/zen/v1/systemone";
+const isJev = () => els.model.value === "jev-1.13-free";
+
+function syncConnUI(){
+  const zen = isJev();
+  $("bearerBlock").classList.toggle("off", zen);
+  $("jevNote").style.display = zen ? "block" : "none";
+  if(zen && !els.url.value.trim()){ els.url.value = ZEN_URL; saveState(); }
+}
 
 const PRESETS = {
   soporte: {
@@ -560,14 +575,14 @@ async function run(){
     if(els.useProxy.checked && location.protocol!=="file:"){
       const r = await fetch("/proxy",{
         method:"POST", headers:{"content-type":"application/json"},
-        body: JSON.stringify({url:els.url.value, token:els.token.value, body:payload, headers:headerMap()})
+        body: JSON.stringify({url:els.url.value, token:isJev() ? "" : els.token.value, body:payload, headers:headerMap()})
       });
       const j = await r.json();
       if(!j.ok) throw new Error(j.error || ("proxy error "+r.status));
       status = j.status; text = j.body; infMs = j.inference_ms;
     } else {
       const headersDirect = {"content-type":"application/json"};
-      if(els.token.value) headersDirect["Authorization"] = "Bearer " + els.token.value;
+      if(els.token.value && !isJev()) headersDirect["Authorization"] = "Bearer " + els.token.value;
       Object.assign(headersDirect, headerMap());
       const r = await fetch(els.url.value, {method:"POST", headers:headersDirect, body:JSON.stringify(payload)});
       status = r.status; text = await r.text();
@@ -768,7 +783,8 @@ function renderHist(){
 function curlCommand(){
   let payload; try{ payload=buildPayload(); }catch(e){ toast(e.message); return null; }
   const tok = els.token.value;
-  const parts = [tok ? `-H "Authorization: Bearer ${tok}"` : `-H "Authorization: Bearer TU_TOKEN"`];
+  const parts = [];
+  if(!isJev()) parts.push(tok ? `-H "Authorization: Bearer ${tok}"` : `-H "Authorization: Bearer TU_TOKEN"`);
   Object.entries(headerMap()).forEach(([k,v]) => parts.push(`-H '${k}: ${v}'`));
   parts.push(`-H 'content-type: application/json'`, `-d '${JSON.stringify(payload)}'`);
   return `curl -s ${els.url.value} \\\n  ` + parts.join(" \\\n  ") + " | python3 -m json.tool";
@@ -799,6 +815,7 @@ els.showToken.onclick = ()=>{
   els.token.type = els.token.type==="password" ? "text" : "password";
 };
 ["url","token","model","body"].forEach(k=>els[k].addEventListener("change", saveState));
+els.model.addEventListener("change", syncConnUI);
 document.addEventListener("keydown", e=>{
   if((e.metaKey||e.ctrlKey) && e.key==="Enter"){ e.preventDefault(); run(); }
 });
@@ -822,6 +839,7 @@ document.querySelectorAll(".langsw button").forEach(b=>{
 });
 
 loadState();
+syncConnUI();
 applyLang();
 syncRawFromForm();
 </script>

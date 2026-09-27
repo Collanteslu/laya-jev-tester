@@ -2,12 +2,14 @@
 
 Todo lo notable de este proyecto, con el formato más cercano a [Keep a Changelog](https://keepachangelog.com/es/1.1.0/).
 
-## [Unreleased]
+## [0.2.0] - 2026-09-27
 
 ### Añadido
 
 - Modelo `jev-1.13-free` (OpenCode Zen) en el selector de checkpoint: el tester ya puede apuntar también a `https://opencode.ai/zen/v1/systemone`.
+- Al elegir `jev-1.13-free` la URL de Zen se rellena sola (si estaba vacía), el campo de Bearer se desactiva y la petición sale sin cabecera `Authorization` (esa API es anónima).
 - Cabeceras HTTP extra configurables desde la página (proxy, modo directo y `curl` incluidos).
+- Sección «Probar Jev gratis (OpenCode Zen)» en los README (es/en).
 
 ### Corregido
 
