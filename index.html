@@ -174,6 +174,7 @@
             <option value="english">english</option>
             <option value="multilingual">multilingual</option>
             <option value="typed-decisions">typed-decisions</option>
+            <option value="jev-1.13-free" data-i18n="model_jev">jev-1.13-free (Zen, gratis)</option>
           </select>
         </div>
         <div style="flex:0 0 170px;display:flex;align-items:flex-end">
@@ -183,6 +184,13 @@
           </label>
         </div>
       </div>
+    </div>
+
+    <div class="card">
+      <h2 data-i18n="headers_card">Cabeceras extra</h2>
+      <div id="hlist"></div>
+      <button class="mini" id="addH" data-i18n="add_h">+ cabecera</button>
+      <p class="hint" data-i18n="headers_hint">Se envían con la petición (por ejemplo X-Title o HTTP-Referer para OpenRouter). No pongas Authorization aquí: usa el campo de Bearer.</p>
     </div>
 
     <div class="card">
@@ -243,6 +251,10 @@ const I18N = {
     conn_card:"Conexión", url_label:"URL del endpoint", token_ph:"peg aquí tu token",
     token_hint:"Se guarda solo en tu navegador (localStorage). No se envía a ningún sitio salvo a la URL de arriba.",
     model_label:"Checkpoint (model)", proxy:"usar proxy local",
+    model_jev:"jev-1.13-free (Zen, gratis)",
+    headers_card:"Cabeceras extra", add_h:"+ cabecera",
+    headers_hint:"Se envían con la petición (por ejemplo X-Title o HTTP-Referer para OpenRouter). No pongas Authorization aquí: usa el campo de Bearer.",
+    hkey_ph:"cabecera", hval_ph:"valor", del_h:"eliminar cabecera",
     input_card:"Entrada · state.body", q_card:"Preguntas",
     preset_ph:"— cargar preset —",
     preset_soporte:"Soporte · tu curl (departamento, urgencia, reembolso)",
@@ -273,6 +285,10 @@ const I18N = {
     conn_card:"Connection", url_label:"Endpoint URL", token_ph:"paste your token here",
     token_hint:"Stored only in your browser (localStorage). Sent nowhere but the URL above.",
     model_label:"Checkpoint (model)", proxy:"use local proxy",
+    model_jev:"jev-1.13-free (Zen, free)",
+    headers_card:"Extra headers", add_h:"+ header",
+    headers_hint:"Sent with the request (e.g. X-Title or HTTP-Referer for OpenRouter). Don't put Authorization here: use the Bearer field.",
+    hkey_ph:"header", hval_ph:"value", del_h:"remove header",
     input_card:"Input · state.body", q_card:"Questions",
     preset_ph:"— load preset —",
     preset_soporte:"Support · your curl (department, urgency, refund)",
@@ -308,8 +324,11 @@ const els = {
   url:$("url"), token:$("token"), showToken:$("showToken"), model:$("model"), useProxy:$("useProxy"),
   body:$("body"), preset:$("preset"), qlist:$("qlist"), addQ:$("addQ"),
   rawMode:$("rawMode"), rawJson:$("rawJson"), run:$("run"), copyCurl:$("copyCurl"),
-  meta:$("meta"), out:$("out"), histWrap:$("histWrap"), hist:$("hist"), toast:$("toast")
+  meta:$("meta"), out:$("out"), histWrap:$("histWrap"), hist:$("hist"), toast:$("toast"),
+  hlist:$("hlist"), addH:$("addH")
 };
+
+let extraHeaders = [];
 
 const PRESETS = {
   soporte: {
@@ -372,8 +391,10 @@ function loadState(){
     questions = s.questions || deepCopy(PRESETS.soporte.questions);
     if(s.rawMode){ els.rawMode.checked = true; els.rawJson.style.display="block"; els.rawJson.value = s.rawJson || ""; }
     history = (s.history || []).map(h => ({...h, ts: new Date(h.ts)}));
+    extraHeaders = Array.isArray(s.extraHeaders) ? s.extraHeaders : [];
   }catch(e){
     lang = (navigator.language||"").toLowerCase().startsWith("en") ? "en" : "es";
+    extraHeaders = [];
     els.url.value = "";
     els.body.value = PRESETS.soporte.body;
     questions = deepCopy(PRESETS.soporte.questions);
@@ -388,6 +409,7 @@ function loadState(){
 function saveState(){
   const s = {
     lang, url:els.url.value, token:els.token.value, model:els.model.value,
+    extraHeaders,
     useProxy:els.useProxy.checked, body:els.body.value, questions,
     rawMode:els.rawMode.checked, rawJson:els.rawMode.checked ? els.rawJson.value : undefined,
     history
@@ -477,6 +499,25 @@ function renderQuestions(){
 }
 function isObj(o){ return o && typeof o==="object" && !Array.isArray(o); }
 
+function renderHeaders(){
+  els.hlist.innerHTML = "";
+  extraHeaders.forEach((h,i)=>{
+    const r = document.createElement("div"); r.className="critrow";
+    const ki = document.createElement("input"); ki.value=h.k; ki.placeholder=t("hkey_ph");
+    ki.oninput=()=>{ h.k=ki.value; saveState(); };
+    const vi = document.createElement("input"); vi.value=h.v; vi.placeholder=t("hval_ph");
+    vi.oninput=()=>{ h.v=vi.value; saveState(); };
+    const d = document.createElement("button"); d.className="del"; d.textContent="×"; d.title=t("del_h");
+    d.onclick=()=>{ extraHeaders.splice(i,1); renderHeaders(); saveState(); };
+    r.append(ki,vi,d); els.hlist.appendChild(r);
+  });
+}
+function headerMap(){
+  const m = {};
+  extraHeaders.forEach(h=>{ if(h.k) m[h.k] = h.v || ""; });
+  return m;
+}
+
 function buildPayload(){
   if(els.rawMode.checked){
     try{ return JSON.parse(els.rawJson.value); }
@@ -519,7 +560,7 @@ async function run(){
     if(els.useProxy.checked && location.protocol!=="file:"){
       const r = await fetch("/proxy",{
         method:"POST", headers:{"content-type":"application/json"},
-        body: JSON.stringify({url:els.url.value, token:els.token.value, body:payload})
+        body: JSON.stringify({url:els.url.value, token:els.token.value, body:payload, headers:headerMap()})
       });
       const j = await r.json();
       if(!j.ok) throw new Error(j.error || ("proxy error "+r.status));
@@ -527,6 +568,7 @@ async function run(){
     } else {
       const headersDirect = {"content-type":"application/json"};
       if(els.token.value) headersDirect["Authorization"] = "Bearer " + els.token.value;
+      Object.assign(headersDirect, headerMap());
       const r = await fetch(els.url.value, {method:"POST", headers:headersDirect, body:JSON.stringify(payload)});
       status = r.status; text = await r.text();
       const h = r.headers.get("x-inference-time-ms"); if(h) infMs = parseFloat(h);
@@ -726,9 +768,10 @@ function renderHist(){
 function curlCommand(){
   let payload; try{ payload=buildPayload(); }catch(e){ toast(e.message); return null; }
   const tok = els.token.value;
-  const auth = tok ? `-H "Authorization: Bearer ${tok}"` : `-H "Authorization: Bearer TU_TOKEN"`;
-  const body = JSON.stringify(payload);
-  return `curl -s ${els.url.value} \\\n  ${auth} \\\n  -H 'content-type: application/json' \\\n  -d '${body}' | python3 -m json.tool`;
+  const parts = [tok ? `-H "Authorization: Bearer ${tok}"` : `-H "Authorization: Bearer TU_TOKEN"`];
+  Object.entries(headerMap()).forEach(([k,v]) => parts.push(`-H '${k}: ${v}'`));
+  parts.push(`-H 'content-type: application/json'`, `-d '${JSON.stringify(payload)}'`);
+  return `curl -s ${els.url.value} \\\n  ` + parts.join(" \\\n  ") + " | python3 -m json.tool";
 }
 
 els.run.onclick = run;
@@ -738,6 +781,7 @@ els.copyCurl.onclick = async ()=>{
   catch(e){ toast(t("t_nocopy")); }
 };
 els.addQ.onclick = ()=>{ questions.push({key:"pregunta_"+(questions.length+1), type:"choice", instructions:"", criteria:{opcion1:"",opcion2:""}}); renderQuestions(); };
+els.addH.onclick = ()=>{ extraHeaders.push({k:"", v:""}); renderHeaders(); saveState(); };
 els.preset.onchange = ()=>{
   const p = PRESETS[els.preset.value]; if(!p) return;
   els.body.value = p.body;
@@ -768,6 +812,7 @@ function applyLang(){
   document.querySelectorAll("[data-i18n-ph]").forEach(el=>{ el.placeholder = t(el.dataset.i18nPh); });
   document.querySelectorAll(".langsw button").forEach(b=>b.classList.toggle("on", b.dataset.lang===lang));
   renderQuestions();
+  renderHeaders();
   renderHist();
   if(lastResult) renderResult(lastResult.status, lastResult.json, lastResult.text, lastResult.total, lastResult.infMs, lastResult.payload);
   saveState();

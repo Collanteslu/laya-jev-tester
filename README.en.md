@@ -33,7 +33,8 @@ Everything runs on `127.0.0.1:8899`; nothing is exposed to the network. And if y
 
 ## What you can do on the page
 
-- **Connection**: URL, Bearer token and checkpoint (`auto`, `english`, `multilingual` or `typed-decisions`).
+- **Connection**: URL, Bearer token and checkpoint (`auto`, `english`, `multilingual`, `typed-decisions` or `jev-1.13-free` from OpenCode Zen, free and keyless).
+- **Extra headers**: add any HTTP header to the request (`X-Title`, `HTTP-Referer`…); they're sent through the proxy, in direct mode and included in the generated `curl`.
 - **Questions**: built with forms, one at a time. The three types the model understands:
   - `choice` — pick among options with a description (which department handles this?)
   - `score` — score on an ordered scale you define (not urgent → critical)

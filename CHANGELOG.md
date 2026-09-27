@@ -2,6 +2,17 @@
 
 Todo lo notable de este proyecto, con el formato más cercano a [Keep a Changelog](https://keepachangelog.com/es/1.1.0/).
 
+## [Unreleased]
+
+### Añadido
+
+- Modelo `jev-1.13-free` (OpenCode Zen) en el selector de checkpoint: el tester ya puede apuntar también a `https://opencode.ai/zen/v1/systemone`.
+- Cabeceras HTTP extra configurables desde la página (proxy, modo directo y `curl` incluidos).
+
+### Corregido
+
+- El proxy manda un `User-Agent` de navegador: Cloudflare bloqueaba las peticiones de urllib con error 1010.
+
 ## [0.1.0] - 2026-09-27
 
 Primera versión publicada.

@@ -33,7 +33,8 @@ Todo corre en `127.0.0.1:8899`, no se abre nada a la red. Y si algún día tu AP
 
 ## Lo que puedes hacer en la página
 
-- **Conexión**: URL, Bearer token y checkpoint (`auto`, `english`, `multilingual` o `typed-decisions`).
+- **Conexión**: URL, Bearer token y checkpoint (`auto`, `english`, `multilingual`, `typed-decisions` o `jev-1.13-free` de OpenCode Zen, gratis y sin key).
+- **Cabeceras extra**: añade cualquier cabecera HTTP a la petición (`X-Title`, `HTTP-Referer`…); se envían por el proxy, en modo directo y salen incluidas en el `curl`.
 - **Preguntas**: las construyes con formularios, una a una. Los tres tipos que entiende el modelo:
   - `choice` — eliges entre opciones con su descripción (¿qué departamento lo atiende?)
   - `score` — puntúa en una escala ordenada que tú defines (no urgente → crítico)
