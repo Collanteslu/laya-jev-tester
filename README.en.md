@@ -51,6 +51,7 @@ For your own server (`laya-serve`) nothing changes: your URL + your Bearer + a L
 
 - **Python 3.8 or newer**, that's it. The server uses only the standard library (`http.server`, `urllib`), so the `python3` already on your Mac or Linux box works as is.
 - The page itself is plain HTML, CSS and JavaScript — no frameworks, no builds. Any modern browser renders it.
+- Or, if you prefer, **Docker**: the image ships Python inside and you touch nothing on the system.
 
 ## Why there's a server (and not just an HTML file)
 
@@ -66,9 +67,10 @@ Everything runs on `127.0.0.1:8899`; nothing is exposed to the network. And if y
   - `choice` — pick among options with a description (which department handles this?)
   - `score` — score on an ordered scale you define (not urgent → critical)
   - `noul` — returns the probability of a yes/no (does it ask for a refund?)
-- **Presets**: four ready-made examples (support, full triage, guardrail, model router) to get started fast.
+- **Presets**: four ready-made examples (support, full triage, guardrail, model router) to get started fast, with body and questions in the active language.
+- **ES / EN**: the switch in the header changes the whole UI **and** the loaded content when it matches a preset (anything you typed yourself is left alone).
 - **JSON mode**: if you prefer, edit the whole payload by hand and the form is ignored.
-- **Results**: animated probability bars with the winning option highlighted, the needle scale with per-level distribution, the colour yes/no meter, `confidence` and `answer_confidence` badges, HTTP status, total and inference latency, model used with the routing reason, and tokens consumed.
+- **Results**: animated probability bars with the winning option highlighted; `score` bars carry the level number and its text (critical, soon, not urgent…); the needle scale with per-level distribution, the colour yes/no meter, `confidence` and `answer_confidence` badges, HTTP status, total and inference latency, model used with the routing reason, and tokens consumed.
 - **Extras**: copy the request as a ready-to-paste `curl`, plus a history of the last 10 runs (click any to view it again).
 
 ## The request underneath

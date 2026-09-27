@@ -51,6 +51,7 @@ Para tu propio servidor (`laya-serve`) no cambia nada: tu URL + tu Bearer + un c
 
 - **Python 3.8 o superior**, solo eso. El servidor usa únicamente la librería estándar (`http.server`, `urllib`), así que el `python3` que ya tienes en el Mac o en Linux vale tal cual.
 - La página en sí es HTML, CSS y JavaScript puros, sin frameworks ni builds. Cualquier navegador moderno la renderiza.
+- O, si lo prefieres, **Docker**: la imagen lleva el Python dentro y no tocas nada del sistema.
 
 ## Por qué hay un servidor (y no solo un HTML)
 
@@ -66,9 +67,10 @@ Todo corre en `127.0.0.1:8899`, no se abre nada a la red. Y si algún día tu AP
   - `choice` — eliges entre opciones con su descripción (¿qué departamento lo atiende?)
   - `score` — puntúa en una escala ordenada que tú defines (no urgente → crítico)
   - `noul` — devuelve la probabilidad de un sí/no (¿pide reembolso?)
-- **Presets**: cuatro ejemplos ya montados (soporte, triaje completo, guardrail, router de modelos) para empezar rápido.
+- **Presets**: cuatro ejemplos ya montados (soporte, triaje completo, guardrail, router de modelos) para empezar rápido, con el cuerpo y las preguntas en el idioma activo.
+- **ES / EN**: el selector del header cambia toda la interfaz **y** el contenido cargado si coincide con un preset (lo que escribas a mano no se toca).
 - **Modo JSON**: si prefieres, editas el payload completo a mano y el formulario se ignora.
-- **Resultados**: barras de probabilidad animadas con la opción ganadora destacada, la escala con aguja y la distribución por nivel, el medidor de sí/no con color, badges de `confidence` y `answer_confidence`, código HTTP, latencia total y de inferencia, modelo usado con el motivo del routing y tokens consumidos.
+- **Resultados**: barras de probabilidad animadas con la opción ganadora destacada; en `score` cada barra lleva el número de nivel y su texto (crítico, pronto, no urgente…); la escala con aguja y la distribución por nivel, el medidor de sí/no con color, badges de `confidence` y `answer_confidence`, código HTTP, latencia total y de inferencia, modelo usado con el motivo del routing y tokens consumidos.
 - **Extras**: copiar la petición como `curl` lista para el terminal, e historial con las últimas 10 ejecuciones (clic en cualquiera para volver a verla).
 
 ## La petición por debajo
